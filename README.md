@@ -8,14 +8,13 @@ Research on technology that automatically generates high-quality source code fro
 
 # Relate References
 
->- Copilot https://github.com/features/copilot
+- Copilot https://github.com/features/copilot
   
->- Alphacode https://www.deepmind.com/blog/competitive-programming-with-alphacode
+- Alphacode https://www.deepmind.com/blog/competitive-programming-with-alphacode
 
->- Paper list
+- Paper list
   - "Program synthesis using natural language" , ICSE 2016 , https://dl.acm.org/doi/10.1145/2884781.2884786
-
-    •	"Learning Syntactic Program Transformations from Examples", ICSE 2017, https://ieeexplore.ieee.org/document/7985680
+  - "Learning Syntactic Program Transformations from Examples", ICSE 2017, https://ieeexplore.ieee.org/document/7985680
 
     •	"Synthesis and machine learning for heterogeneous extraction", PLDI 2019. https://dl.acm.org/doi/10.1145/3314221.3322485
 
