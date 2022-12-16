@@ -1,4 +1,4 @@
-# autocode
+# Autocode
 
 Research on technology that automatically generates high-quality source code from requirements written in natural language, execution examples, or partially written source code.
 
