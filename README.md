@@ -6,22 +6,20 @@ Research on technology that automatically generates high-quality source code fro
 
 ![image](./overview_autocode.png)
 
-# Requirements of Source Code Infrastructure
+# Relate References
 
->- Multiple source code collection systems provided by multiple organizations must be provided. 
-   Currently, Sungkyunkwan University and Suresoft company are in charge of collecting source codes, and the relevant institutions must collect and store data sets according to some guidelines.
+>- Copilot https://github.com/features/copilot
+  
+>- Alphacode https://www.deepmind.com/blog/competitive-programming-with-alphacode
 
->- A system that individually processes the collected source codes must be provided. 
-   In addition, source code and natural language should be processed so that they can be easily and immediately used in a third form such as AST or PDG, 
-   which can structurally reflect the control and data flow of the program, rather than being stored as they are.
+>- Paper list
+•	"Program synthesis using natural language" , ICSE 2016 , https://dl.acm.org/doi/10.1145/2884781.2884786
+•	"Learning Syntactic Program Transformations from Examples", ICSE 2017, https://ieeexplore.ieee.org/document/7985680
+•	"Synthesis and machine learning for heterogeneous extraction", PLDI 2019. https://dl.acm.org/doi/10.1145/3314221.3322485
+•	"Multi-modal program inference: a marriage of pre-trained language models and component-based synthesis", OOPSLA 2021
+•	"Semantic programming by example with pre-trained models", OOPSLA 2021, https://www.microsoft.com/en-us/research/publication/semantic-programming-by-example-with-pre-trained-models/
+•	"Synchromesh: Reliable Code Generation from Pre-trained Language Models", ICLR 2022,  https://iclr.cc/Conferences/2022/Schedule?showEvent=6709
+•	"Overwatch: Learning Patterns in Code Edit Sequences", OOPSLA 2022, https://arxiv.org/abs/2207.12456
+•	"Neurosymbolic Repair for Low-Code Formula Languages", OOPSLA 2022, https://arxiv.org/abs/2207.11765
+•	"Jigsaw: Large Language Models meet Program Synthesis" , ICSE 2022, https://conf.researchr.org/details/icse-2022/icse-2022-papers/178/Jigsaw-Large-Language-Models-meet-Program-Synthesis
 
->- It has a data set in which the collected source code and natural language are stored in the form of a database, 
-   and a system for using the source code data set that can be extracted from outside using a specific API must be provided.
-
->- A inter-conversion system between NL and PL must be provided for automatic generation of ML-based source code
-
->- Automatic generation system of ML-based source code must provide multiple most appropriate source codes
-
->- When a user makes a query using NL, a function that converts the automatically generated source code to suit the user's environment must be provided.
-
->- The automatic source code generation system must be provided in the API form so that third parties can easily use it from the outside.
