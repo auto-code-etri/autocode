@@ -1,17 +1,10 @@
 # autocode
 
-Building a database infrastructure that can be used for additional research of software generation by learning and analyzing codes, documents, and metadata in the source code repository in the future
+Research on technology that automatically generates high-quality source code from requirements written in natural language, execution examples, or partially written source code.
 
->- Database storage technology that can be used for program creation/SW analysis
+>-  Automatic source code generation technology that combines new and existing techniques such as machine learning (language model), program synthesis, and software engineering.
 
->- Information model technology for generating program source code and improving accuracy of expression
-
->- Database technology with a structure that facilitates the addition/deletion of source codes within the company
-
->- Description of code generation evaluation method reflecting actual needs such as code search, summary, and completion
-
-# Overview 
-![image](./overview.jpg)
+![image](./overview_autocode.png)
 
 # Requirements of Source Code Infrastructure
 
