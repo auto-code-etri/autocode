@@ -31,11 +31,17 @@ def main(rank, hparams, ngpus_per_node: int):
     if hparams.distributed:
         if rank != 0:
             dist.barrier()
-        tok = AutoTokenizer.from_pretrained("microsoft/codebert-base")
+        if os.path.exists("./pre_trained/fine_tune_tok"):
+            tok = AutoTokenizer.from_pretrained("./pre_trained/fine_tune_tok")
+        else:
+            tok = AutoTokenizer.from_pretrained("microsoft/codebert-base")
         if rank == 0:
             dist.barrier()
     else:
-        tok = AutoTokenizer.from_pretrained("microsoft/codebert-base")
+        if os.path.exists("./pre_trained/fine_tune_tok"):
+            tok = AutoTokenizer.from_pretrained("./pre_trained/fine_tune_tok")
+        else:
+            tok = AutoTokenizer.from_pretrained("microsoft/codebert-base")
 
     # get dataloaders
     loaders = [
