@@ -2,6 +2,14 @@ import glob
 import json
 import os
 from typing import List, Tuple
+import os.path
+from os import path
+from transformers import AutoTokenizer
+import tree_sitter
+from tree_sitter import Language, Parser
+from multiprocessing import Pool, cpu_count
+import gc
+import re
 
 import jsonlines
 import numpy as np
@@ -14,10 +22,13 @@ from tqdm import tqdm
 
 from utils import SequentialDistributedSampler
 
+PYTHON_LANGUAGE = Language('build/my-languages.so', 'python')
+parser = Parser()
+parser.set_language(PYTHON_LANGUAGE)
 
 class TranslationDataset(Dataset):
-    """Kor-Eng translation dataset
-
+    """ 
+        NL to AST Dataset
     Args:
         tok (BertTokenizer):
         cached_path (str): Cached(Tokenized) path of dataset
@@ -111,10 +122,10 @@ class TranslationDataset(Dataset):
         return src, tgt_input, tgt_label, src_mask, tgt_mask
 
 
-def get_loader(tok, batch_size, root_path, workers, max_len, mode, distributed=False):
+def get_loader(tok, batch_size, root_path, workers, max_len, mode, rank, do_ast, distributed=False):
     """
     Args:
-        tok (BertTokenizer): BERT tokenizer to use
+        tok (BertTokenizer): CodeBERT tokenizer to use
         batch_size (int): Mini-batch size
         root_path (str): Root path of dataset
         workers (int): Number of dataloader workers
@@ -129,16 +140,17 @@ def get_loader(tok, batch_size, root_path, workers, max_len, mode, distributed=F
 
     # check if cached
     cached_dir = os.path.join(root_path, f"cached/cached_{mode}.jsonl")
+
     if not os.path.isfile(cached_dir):
         print(f"There is no cached(tokenized) {mode} file. Start processing...")
         if distributed:
             if rank != 0:
                 dist.barrier()
-            cache_processed_data(tok, root_path, cached_dir, mode)
+            cache_processed_data(tok, root_path, cached_dir, mode, do_ast)
             if rank == 0:
                 dist.barrier()
         else:
-            cache_processed_data(tok, root_path, cached_dir, mode)
+            cache_processed_data(tok, root_path, cached_dir, mode, do_ast)
         print("Done!")
 
     # build Dataset and Dataloader
@@ -165,44 +177,95 @@ def get_loader(tok, batch_size, root_path, workers, max_len, mode, distributed=F
         drop_last=(mode == "train"),
     )
 
+def remove_docstring(text):
+    inside_quotes = False
+    result = []
+    i = 0
+    while i < len(text):
+        if text[i:i+3] == '"""':
+            inside_quotes = not inside_quotes
+            i += 3
+        else:
+            if not inside_quotes:
+                result.append(text[i])
+            i += 1
+    return re.sub(r'#.*', '', ''.join(result))
 
-def cache_processed_data(tokenizer, root_pth, cached_pth, mode):
-    """Convert csv into jsonl"""
+def parse_ast(node, value):
+    ast_input = value
+    ast_input.append("<" + node.type + ">")                        
+    if node.child_count == 0 and ast_input[-1] != node.text.decode("utf-8"):
+        ast_input.append(node.text)
+    for child in node.children:
+        ast_input = parse_ast(child, ast_input)                              
+    return ast_input                                                  
+
+def process_line(line):
+    raw_data = json.loads(line)
+    tree = parser.parse(bytes(remove_docstring(raw_data["code"]), "utf-8"))
+    ast_code = parse_ast(tree.root_node, [])                                                            
+    return ''.join(raw_data["docstring"].split()), ast_code
+
+def cache_processed_data(tokenizer, root_pth, cached_pth, mode, do_ast):
     os.makedirs(os.path.join(root_pth, "cached/"), exist_ok=True)
+    lines = []
 
     # load raw data
-    df = []
-
-    if mode == "train":                                                             # 학습 데이터 세트 로드
+    if mode == "train":
         for i in range(12):
-            with open("./src/jsonl/train/python_train_{}.jsonl".format(i)) as f:
-                df += f.readlines()
-    else:                                                                           # 평가 추론 데이터세트 로드
-        with open("./src/jsonl/{}/python_{}_0.jsonl".format(mode, mode)) as f:
-            df += f.readlines()
+            with open("./jsonl/train/python_train_{}.jsonl".format(i)) as f:
+                lines += f.readlines()
+    else:
+        with open("./jsonl/{}/python_{}_0.jsonl".format(mode, mode)) as f:
+            lines += f.readlines()
 
-    def remove_triple_quotes(text):
-        inside_quotes = False
-        result = []
+    len_of_data = len(lines)
 
-        i = 0
-        while i < len(text):
-            if text[i:i+3] == '"""':
-                inside_quotes = not inside_quotes
-                i += 3
-            else:
-                if not inside_quotes:
-                    result.append(text[i])
-                i += 1
+    vocab = tokenizer.get_vocab()
 
-        return ''.join(result)
+    oov_tokens = []
+    code = []
+    docs = []
+
     # tokenize and save cached jsonl file
     with jsonlines.open(cached_pth, "w") as f:
-        for j in df:
-            i = json.loads(j)
-            f.write(
-                {
-                    "src": tokenizer.encode(i['docstring'], max_length=1024, truncation=True),
-                    "tgt": tokenizer.encode(remove_triple_quotes(i['code']), max_length=1024, truncation=True),
-                }
-            )
+        if do_ast:
+            for pos, line in enumerate(tqdm(lines, total=len_of_data)):
+                ast = []
+                doc, ast_code = process_line(line)
+
+                for i, token in enumerate(ast_code):
+                    if isinstance(token, bytes):
+                        ast = ast + tokenizer.tokenize(token.decode('utf-8'))
+                        continue
+                    if token not in vocab and token not in oov_tokens:
+                        ast.append(token)
+                        oov_tokens.append(token)
+                    else:
+                        ast.append(token)
+
+                code.append(ast)
+                docs.append(tokenizer.tokenize(doc))
+
+                if len(code) >= 10000 or pos == len_of_data - 1:
+                    if len(oov_tokens) != 0:
+                        tokenizer.add_tokens(oov_tokens) 
+                        vocab = tokenizer.get_vocab()
+
+                    for doc, ast_code in zip(docs, code):
+                        result = {"src": [0] + tokenizer.convert_tokens_to_ids(doc) + [2], "tgt": [0] + tokenizer.convert_tokens_to_ids(ast_code) + [2], }
+                        f.write(result)
+
+                    oov_tokens = []
+                    code = []
+                    docs = []
+
+            if mode == "train":
+                tokenizer.save_pretrained("./pre_trained/fine_tune_tok")
+        else:
+            for line in tqdm(lines):
+                raw_data = json.loads(line)
+                doc = tokenizer.tokenize(''.join(raw_data["docstring_tokens"]))
+                code = tokenizer.tokenize(''.join(raw_data["code_tokens"]))
+                result = {"src": [0] + tokenizer.convert_tokens_to_ids(doc) + [2], "tgt": [0] + tokenizer.convert_tokens_to_ids(code) + [2], }
+                f.write(result)

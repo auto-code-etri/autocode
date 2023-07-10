@@ -176,10 +176,10 @@ def beam_search(model, tok, args):
         input_ids=torch.cat((input_ids,beam.getCurrentState()),-1)
         
     hyp= beam.getHyp(beam.getFinal())
-    pred=beam.buildTargetTokens(hyp)[:args.beam_size]
+    pred=beam.buildTargetTokens(hyp)[:args.beam_size]                                                   # Best Prediction in Candidate list
     pred=[torch.cat([x.view(-1) for x in p]+[zero]*(args.max_len-len(p))).view(1,-1) for p in pred]
     preds.append(torch.cat(pred,0).unsqueeze(0))
-        
+    
     preds=torch.cat(preds,0)                
     return preds   
     
@@ -187,25 +187,26 @@ def beam_search(model, tok, args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--source", type=str, help="Input sequence to translate")
-    parser.add_argument("--ckpt-path", type=str, default="./best_model_step_112499_loss_1.7508.pt", help="Checkpoint path to decode")
+    parser.add_argument("--ckpt-path", type=str, default="checkpoints/version-2/best_model_step_56249_loss_1.2378.pt", help="Checkpoint path to decode")
 
-    parser.add_argument("--n-enc-block", type=int, default=6)
-    parser.add_argument("--n-dec-block", type=int, default=6)
-    parser.add_argument("--hidden", type=int, default=512)
+    parser.add_argument("--n-enc-block", type=int, default=12)
+    parser.add_argument("--n-dec-block", type=int, default=12)
+    parser.add_argument("--hidden", type=int, default=768)
     parser.add_argument("--fc-hidden", type=int, default=2048)
     parser.add_argument(
-        "--num-head", type=int, default=8, help="Number of self-attention head"
+        "--num-head", type=int, default=12, help="Number of self-attention head"
     )
     parser.add_argument("--max-len", type=int, default=512)
     parser.add_argument("--dropout", type=float, default=0.1)
-    parser.add_argument("--beam_size", type=float, default=4)
+    parser.add_argument("--beam_size", type=float, default=8)
     args = parser.parse_args()
 
     assert args.source, "You should enter source text to translate."
     assert args.ckpt_path, "You should enter trained checkpoint path."
 
     # load checkpoint
-    tok = AutoTokenizer.from_pretrained("microsoft/codebert-base")
+    tok = AutoTokenizer.from_pretrained("asdf/fine_tune_tok")
+    
     model = Transformer(
         vocab_size=len(tok.vocab),
         num_enc_block=args.n_enc_block,
