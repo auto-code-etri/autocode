@@ -9,6 +9,7 @@ import tree_sitter
 from tree_sitter import Language, Parser
 from multiprocessing import Pool, cpu_count
 import gc
+
 import re
 
 import jsonlines
@@ -122,6 +123,7 @@ class TranslationDataset(Dataset):
         return src, tgt_input, tgt_label, src_mask, tgt_mask
 
 
+
 def get_loader(tok, batch_size, root_path, workers, max_len, mode, rank, do_ast, distributed=False):
     """
     Args:
@@ -194,6 +196,7 @@ def remove_docstring(text):
 def parse_ast(node, value):
     ast_input = value
     ast_input.append("<" + node.type + ">")                        
+
     if node.child_count == 0 and ast_input[-1] != node.text.decode("utf-8"):
         ast_input.append(node.text)
     for child in node.children:
@@ -207,6 +210,7 @@ def process_line(line):
     return ''.join(raw_data["docstring"].split()), ast_code
 
 def cache_processed_data(tokenizer, root_pth, cached_pth, mode, do_ast):
+
     os.makedirs(os.path.join(root_pth, "cached/"), exist_ok=True)
     lines = []
 
@@ -259,9 +263,6 @@ def cache_processed_data(tokenizer, root_pth, cached_pth, mode, do_ast):
                     oov_tokens = []
                     code = []
                     docs = []
-
-            if mode == "train":
-                tokenizer.save_pretrained("./pre_trained/fine_tune_tok")
         else:
             for line in tqdm(lines):
                 raw_data = json.loads(line)
@@ -269,3 +270,4 @@ def cache_processed_data(tokenizer, root_pth, cached_pth, mode, do_ast):
                 code = tokenizer.tokenize(''.join(raw_data["code_tokens"]))
                 result = {"src": [0] + tokenizer.convert_tokens_to_ids(doc) + [2], "tgt": [0] + tokenizer.convert_tokens_to_ids(code) + [2], }
                 f.write(result)
+
