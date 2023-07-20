@@ -22,13 +22,9 @@ from tqdm import tqdm
 
 from utils import SequentialDistributedSampler
 
-PYTHON_LANGUAGE = Language('build/my-languages.so', 'python')
-parser = Parser()
-parser.set_language(PYTHON_LANGUAGE)
-
 class TranslationDataset(Dataset):
-    """ 
-        NL to AST Dataset
+    """ NL to AST Dataset
+
     Args:
         tok (BertTokenizer):
         cached_path (str): Cached(Tokenized) path of dataset
@@ -125,14 +121,13 @@ class TranslationDataset(Dataset):
 def get_loader(tok, batch_size, root_path, workers, max_len, mode, rank, do_ast, distributed=False):
     """
     Args:
-        tok (BertTokenizer): CodeBERT tokenizer to use
+        tok (BertTokenizer): BERT tokenizer to use
         batch_size (int): Mini-batch size
         root_path (str): Root path of dataset
         workers (int): Number of dataloader workers
         max_len (int): Maximum length of sequence
         mode (str): Choose 'train', 'valid', or 'test
         distributed (bool): Whether to use ddp
-
     Returns:
         DataLoader
     """
@@ -200,39 +195,54 @@ def parse_ast(node, value):
         ast_input = parse_ast(child, ast_input)                              
     return ast_input                                                  
 
-def process_line(line):
-    raw_data = json.loads(line)
+def process_line(raw_data, lang_token, parser):
     tree = parser.parse(bytes(remove_docstring(raw_data["code"]), "utf-8"))
-    ast_code = parse_ast(tree.root_node, [])                                                            
+    init = []
+    init.append(lang_token)
+    ast_code = parse_ast(tree.root_node, init)                                                            
     return ''.join(raw_data["docstring"].split()), ast_code
 
 def cache_processed_data(tokenizer, root_pth, cached_pth, mode, do_ast):
     os.makedirs(os.path.join(root_pth, "cached/"), exist_ok=True)
+
     lines = []
+    lang = ["python", "java", "javascript", "go", "php", "ruby"]
+    lang_token = {"python":"<py>", "java":"<ja>", "javascript":"<js>", "go":"<go>", "php":"<php>", "ruby":"<ru>"}
 
     # load raw data
     if mode == "train":
-        for i in range(12):
-            with open("./jsonl/train/python_train_{}.jsonl".format(i)) as f:
+        for i in lang:
+            with open("./CodeSearchNet/{}/train.jsonl".format(i)) as f:
                 lines += f.readlines()
     else:
-        with open("./jsonl/{}/python_{}_0.jsonl".format(mode, mode)) as f:
-            lines += f.readlines()
+        for i in lang:
+            with open("./CodeSearchNet/{}/{}.jsonl".format(i, mode)) as f:
+                lines += f.readlines()
 
     len_of_data = len(lines)
-
     vocab = tokenizer.get_vocab()
 
     oov_tokens = []
     code = []
     docs = []
 
+    parser = Parser()
+    cur_lang = None
+
     # tokenize and save cached jsonl file
     with jsonlines.open(cached_pth, "w") as f:
         if do_ast:
             for pos, line in enumerate(tqdm(lines, total=len_of_data)):
                 ast = []
-                doc, ast_code = process_line(line)
+                raw_data = json.loads(line)
+                lang = raw_data["language"]
+
+                if cur_lang == None or cur_lang != lang:
+                        LANGUAGE = Language('build/my-languages.so', lang)
+                        parser.set_language(LANGUAGE)
+                        cur_lang = lang
+
+                doc, ast_code = process_line(raw_data, lang_token[lang], parser)
 
                 for i, token in enumerate(ast_code):
                     if isinstance(token, bytes):

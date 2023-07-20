@@ -1,5 +1,6 @@
 import glob
 import os
+import json
 
 import torch
 import torch.nn as nn
@@ -32,14 +33,14 @@ def main(rank, hparams, ngpus_per_node: int):
     if hparams.distributed:
         if rank != 0:
             dist.barrier()
-        if os.path.exists("./pre_trained/fine_tune_tok"):
+        if os.path.exists("./pre_trained/fine_tune_tok") and hparams.do_ast:
             tok = AutoTokenizer.from_pretrained("./pre_trained/fine_tune_tok")
         else:
             tok = AutoTokenizer.from_pretrained("microsoft/codebert-base")
         if rank == 0:
             dist.barrier()
     else:
-        if os.path.exists("./pre_trained/fine_tune_tok"):
+        if os.path.exists("./pre_trained/fine_tune_tok") and hparams.do_ast:
             tok = AutoTokenizer.from_pretrained("./pre_trained/fine_tune_tok")
         else:
             tok = AutoTokenizer.from_pretrained("microsoft/codebert-base")
