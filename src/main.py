@@ -1,5 +1,6 @@
 import glob
 import os
+import json
 
 import torch
 import torch.nn as nn
@@ -13,6 +14,7 @@ from model.net import Transformer
 from trainer import Trainer
 from utils import ResultWriter, fix_seed
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 def main(rank, hparams, ngpus_per_node: int):
     fix_seed(hparams.seed)
@@ -31,14 +33,15 @@ def main(rank, hparams, ngpus_per_node: int):
     if hparams.distributed:
         if rank != 0:
             dist.barrier()
-        if os.path.exists("./pre_trained/fine_tune_tok"):
+        if os.path.exists("./pre_trained/fine_tune_tok") and hparams.do_ast:
             tok = AutoTokenizer.from_pretrained("./pre_trained/fine_tune_tok")
         else:
             tok = AutoTokenizer.from_pretrained("microsoft/codebert-base")
         if rank == 0:
             dist.barrier()
     else:
-        if os.path.exists("./pre_trained/fine_tune_tok"):
+
+        if os.path.exists("./pre_trained/fine_tune_tok") and hparams.do_ast:
             tok = AutoTokenizer.from_pretrained("./pre_trained/fine_tune_tok")
         else:
             tok = AutoTokenizer.from_pretrained("microsoft/codebert-base")
@@ -52,6 +55,8 @@ def main(rank, hparams, ngpus_per_node: int):
             workers=hparams.workers,
             max_len=hparams.max_len,
             mode=mode,
+	        rank=hparams.rank,
+            do_ast=hparams.do_ast,
             distributed=hparams.distributed,
         )
         for mode in ["train", "valid"]
@@ -91,6 +96,9 @@ def main(rank, hparams, ngpus_per_node: int):
             workers=hparams.workers,
             max_len=hparams.max_len,
             mode="test",
+	        rank=hparams.rank,
+            do_ast=hparams.do_ast,
+            distributed=hparams.distributed,
         )
         test_result = trainer.test(test_loader, state_dict)
 

@@ -15,6 +15,8 @@ from tensorboardX import SummaryWriter
 from torch.nn.parallel import DistributedDataParallel as DDP
 from tqdm import tqdm
 from transformers import AdamW, get_cosine_schedule_with_warmup
+from torch.autograd import Variable
+from torch.nn import functional
 
 from utils import AverageMeter
 
