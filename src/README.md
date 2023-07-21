@@ -10,8 +10,8 @@
 - base tokenizer : [huggingface's microsoft/codebert-base tokenizer]
 
 ## 1. Data Structure
-CodeSearchNet 디렉토리 내의 데이터(*.jsonl)은 준비가 필요합니다.
-data/cached 디렉토리 내 파일은 학습 과정에서 자동으로 생성되며, 해당 데이터는 입력으로 들어온 코드가 AST로 변환된 것입니다.
+- 학습을 위해서는 CodeSearchNet 디렉토리 내의 데이터(*.jsonl)은 준비가 필요합니다.
+- data/cached 디렉토리 내 파일은 학습 과정에서 자동으로 생성되며, 해당 데이터는 입력으로 들어온 코드가 AST로 변환된 것입니다.
 ```sh
 src/
   └─ data/
