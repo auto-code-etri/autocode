@@ -1,7 +1,9 @@
 ## 0. Overview
 
-- Task: NL -> PL, NL -> AST 
-- NS->AST 가 기본 옵션이며, NL->PL을 하기 위해서는...
+- Task: NL -> PL, NL -> AST
+
+    NS->AST 가 기본 옵션이며, NL->PL을 하기 위해서는 config에서 "do_ast"를 변경한다.
+  
 - Dataset: CodeSearchNet Python corpus
 
     |  Train  | Valid  |  Test  |
