@@ -40,6 +40,7 @@ def main(rank, hparams, ngpus_per_node: int):
         if rank == 0:
             dist.barrier()
     else:
+
         if os.path.exists("./pre_trained/fine_tune_tok") and hparams.do_ast:
             tok = AutoTokenizer.from_pretrained("./pre_trained/fine_tune_tok")
         else:
