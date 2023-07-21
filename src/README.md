@@ -41,7 +41,9 @@ src/
 ## 3. How to Run
 
 **Note**: In this implementation, ```[CLS]``` and ```[SEP]``` tokens mean ```<s>``` and ```</s>``` respectively.
+
 **Note**: The codes in CodeSearchNet are converted into AST and utilized for training through the dataset.py/cache_processed_data() function.
+
 **Note**: Configuration of this project -> config.py
 
 ### Train
