@@ -118,6 +118,35 @@ class TranslationDataset(Dataset):
 
         return src, tgt_input, tgt_label, src_mask, tgt_mask
 
+def Prepare_loaders(tok, hparams):
+    train_loader = get_loader(
+            tok=tok,
+            batch_size=hparams.batch_size,
+            root_path=hparams.root_path,
+            workers=hparams.workers,
+            max_len=hparams.max_len,
+            mode="train",
+	        rank=hparams.rank,
+            do_ast=hparams.do_ast,
+            distributed=hparams.distributed,
+        )
+    
+    if os.path.exists("./pre_trained/fine_tune_tok") and hparams.do_ast:
+            tok = AutoTokenizer.from_pretrained("./pre_trained/fine_tune_tok")
+
+    valid_loader = get_loader(
+            tok=tok,
+            batch_size=hparams.batch_size,
+            root_path=hparams.root_path,
+            workers=hparams.workers,
+            max_len=hparams.max_len,
+            mode="valid",
+	        rank=hparams.rank,
+            do_ast=hparams.do_ast,
+            distributed=hparams.distributed,
+        )    
+    
+    return [train_loader, valid_loader], tok
 
 
 def get_loader(tok, batch_size, root_path, workers, max_len, mode, rank, do_ast, distributed=False):
@@ -280,7 +309,7 @@ def cache_processed_data(tokenizer, root_pth, cached_pth, mode, do_ast):
                     code = []
                     docs = []
 
-            if mode == "train":
+            if mode == "train" or mode == "valid":
                 tokenizer.save_pretrained("./pre_trained/fine_tune_tok")
         else:
             for line in tqdm(lines):

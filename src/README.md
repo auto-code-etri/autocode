@@ -12,7 +12,9 @@
 
 - base tokenizer : [huggingface's microsoft/codebert-base tokenizer]
   
-   NL->AST 학습에서는 AST 노드 종류(node type)을 사전학습 토크나이저의 vocab에 추가하고 학습에 활용합니다.
+   NL->AST 학습에서는 CodeSearchNet 데이터를 불러와 Treesitter를 활용하여 AST 파싱을 진행합니다.
+   
+   이때 파싱한 AST의 노드 종류(node type)을 동적으로 사전학습 토크나이저의 vocab에 추가하고 학습에 활용합니다.
   
    AST 노드 종류가 추가된 토크나이저는 ```pre_trained/fine_tune_tok```에 저장됩니다.
   

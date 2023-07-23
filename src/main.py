@@ -9,12 +9,24 @@ import torch.multiprocessing as mp
 from transformers import AutoTokenizer
 
 from config import load_config
-from dataset import get_loader
+from dataset import Prepare_loaders, get_loader
 from model.net import Transformer
 from trainer import Trainer
 from utils import ResultWriter, fix_seed
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+def get_tokenizer(hparams):
+    if not os.path.exists("./pre_trained"):
+        os.makedirs("./pre_trained")
+    
+    if os.path.exists("./pre_trained/fine_tune_tok") and hparams.do_ast:
+        print("pretrained tokenizer.")
+        tok = AutoTokenizer.from_pretrained("./pre_trained/fine_tune_tok")
+    else:
+        tok = AutoTokenizer.from_pretrained("microsoft/codebert-base")
+        
+    return tok
 
 def main(rank, hparams, ngpus_per_node: int):
     fix_seed(hparams.seed)
@@ -33,34 +45,14 @@ def main(rank, hparams, ngpus_per_node: int):
     if hparams.distributed:
         if rank != 0:
             dist.barrier()
-        if os.path.exists("./pre_trained/fine_tune_tok") and hparams.do_ast:
-            tok = AutoTokenizer.from_pretrained("./pre_trained/fine_tune_tok")
-        else:
-            tok = AutoTokenizer.from_pretrained("microsoft/codebert-base")
+        tok = get_tokenizer(hparams)
         if rank == 0:
             dist.barrier()
     else:
-
-        if os.path.exists("./pre_trained/fine_tune_tok") and hparams.do_ast:
-            tok = AutoTokenizer.from_pretrained("./pre_trained/fine_tune_tok")
-        else:
-            tok = AutoTokenizer.from_pretrained("microsoft/codebert-base")
+        tok = get_tokenizer(hparams)
 
     # get dataloaders
-    loaders = [
-        get_loader(
-            tok=tok,
-            batch_size=hparams.batch_size,
-            root_path=hparams.root_path,
-            workers=hparams.workers,
-            max_len=hparams.max_len,
-            mode=mode,
-	        rank=hparams.rank,
-            do_ast=hparams.do_ast,
-            distributed=hparams.distributed,
-        )
-        for mode in ["train", "valid"]
-    ]
+    loaders, tok = Prepare_loaders(tok, hparams)
 
     # get model and initialize
     model = Transformer(
