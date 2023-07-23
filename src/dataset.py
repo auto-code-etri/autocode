@@ -9,6 +9,7 @@ import tree_sitter
 from tree_sitter import Language, Parser
 from multiprocessing import Pool, cpu_count
 import gc
+
 import re
 
 import jsonlines
@@ -147,7 +148,9 @@ def Prepare_loaders(tok, hparams):
     
     return [train_loader, valid_loader], tok
 
+
 def get_loader(tok, batch_size, root_path, workers, max_len, mode, rank, do_ast, distributed=False):
+
     """
     Args:
         tok (BertTokenizer): BERT tokenizer to use
@@ -213,16 +216,19 @@ def remove_docstring(text):
             if not inside_quotes:
                 result.append(text[i])
             i += 1
+
     return re.sub(r'#.*', '', ''.join(result))
 
 def parse_ast(node, value):
     ast_input = value
     ast_input.append("<" + node.type + ">")                        
+
     if node.child_count == 0 and ast_input[-1] != node.text.decode("utf-8"):
         ast_input.append(node.text)
     for child in node.children:
         ast_input = parse_ast(child, ast_input)                              
     return ast_input                                                  
+
 
 def process_line(raw_data, lang_token, parser):
     tree = parser.parse(bytes(remove_docstring(raw_data["code"]), "utf-8"))
@@ -232,7 +238,9 @@ def process_line(raw_data, lang_token, parser):
     return ''.join(raw_data["docstring"].split()), ast_code
 
 def cache_processed_data(tokenizer, root_pth, cached_pth, mode, do_ast):
+
     os.makedirs(os.path.join(root_pth, "cached/"), exist_ok=True)
+    lines = []
 
     lines = []
     lang = ["python", "java", "javascript", "go", "php", "ruby"]
@@ -240,6 +248,7 @@ def cache_processed_data(tokenizer, root_pth, cached_pth, mode, do_ast):
 
     # load raw data
     if mode == "train":
+
         for i in lang:
             with open("./CodeSearchNet/{}/train.jsonl".format(i)) as f:
                 lines += f.readlines()
@@ -249,12 +258,13 @@ def cache_processed_data(tokenizer, root_pth, cached_pth, mode, do_ast):
                 lines += f.readlines()
 
     len_of_data = len(lines)
+
     vocab = tokenizer.get_vocab()
 
     oov_tokens = []
     code = []
     docs = []
-
+    
     parser = Parser()
     cur_lang = None
 
@@ -308,3 +318,4 @@ def cache_processed_data(tokenizer, root_pth, cached_pth, mode, do_ast):
                 code = tokenizer.tokenize(''.join(raw_data["code_tokens"]))
                 result = {"src": [0] + tokenizer.convert_tokens_to_ids(doc) + [2], "tgt": [0] + tokenizer.convert_tokens_to_ids(code) + [2], }
                 f.write(result)
+
