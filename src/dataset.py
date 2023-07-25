@@ -8,6 +8,7 @@ from transformers import AutoTokenizer
 import tree_sitter
 from tree_sitter import Language, Parser
 from multiprocessing import Pool, cpu_count
+import pickle
 import gc
 import re
 
@@ -117,35 +118,23 @@ class TranslationDataset(Dataset):
 
         return src, tgt_input, tgt_label, src_mask, tgt_mask
 
-def Prepare_loaders(tok, hparams):
-    train_loader = get_loader(
-            tok=tok,
-            batch_size=hparams.batch_size,
-            root_path=hparams.root_path,
-            workers=hparams.workers,
-            max_len=hparams.max_len,
-            mode="train",
-	        rank=hparams.rank,
-            do_ast=hparams.do_ast,
-            distributed=hparams.distributed,
-        )
-    
-    if os.path.exists("./pre_trained/fine_tune_tok") and hparams.do_ast:
-            tok = AutoTokenizer.from_pretrained("./pre_trained/fine_tune_tok")
+def prepare_new_tokens():
+    lang = ["python", "java", "javascript", "go", "php", "ruby"]
+    ast_tokens = []
 
-    valid_loader = get_loader(
-            tok=tok,
-            batch_size=hparams.batch_size,
-            root_path=hparams.root_path,
-            workers=hparams.workers,
-            max_len=hparams.max_len,
-            mode="valid",
-	        rank=hparams.rank,
-            do_ast=hparams.do_ast,
-            distributed=hparams.distributed,
-        )    
-    
-    return [train_loader, valid_loader], tok
+    for l in lang:
+        file_path = './build/tree-sitter-{}/src/node-types.json'.format(l)
+        with open(file_path,encoding='UTF-8') as json_file:
+            data = json.load(json_file)
+        for line in data:
+            new_token = "<" + line["type"] + ">"
+            if new_token not in ast_tokens:
+                ast_tokens.append(new_token)
+
+    with open("./pre_trained/ast_tokens.pkl", "wb") as f:
+        pickle.dump(ast_tokens, f)
+
+    return ast_tokens
 
 def get_loader(tok, batch_size, root_path, workers, max_len, mode, rank, do_ast, distributed=False):
     """
@@ -249,9 +238,7 @@ def cache_processed_data(tokenizer, root_pth, cached_pth, mode, do_ast):
                 lines += f.readlines()
 
     len_of_data = len(lines)
-    vocab = tokenizer.get_vocab()
 
-    oov_tokens = []
     code = []
     docs = []
 
@@ -277,9 +264,6 @@ def cache_processed_data(tokenizer, root_pth, cached_pth, mode, do_ast):
                     if isinstance(token, bytes):
                         ast = ast + tokenizer.tokenize(token.decode('utf-8'))
                         continue
-                    if token not in vocab and token not in oov_tokens:
-                        ast.append(token)
-                        oov_tokens.append(token)
                     else:
                         ast.append(token)
 
@@ -287,20 +271,11 @@ def cache_processed_data(tokenizer, root_pth, cached_pth, mode, do_ast):
                 docs.append(tokenizer.tokenize(doc))
 
                 if len(code) >= 10000 or pos == len_of_data - 1:
-                    if len(oov_tokens) != 0:
-                        tokenizer.add_tokens(oov_tokens) 
-                        vocab = tokenizer.get_vocab()
-
                     for doc, ast_code in zip(docs, code):
                         result = {"src": [0] + tokenizer.convert_tokens_to_ids(doc) + [2], "tgt": [0] + tokenizer.convert_tokens_to_ids(ast_code) + [2], }
                         f.write(result)
-
-                    oov_tokens = []
                     code = []
                     docs = []
-
-            if mode == "train" or mode == "valid":
-                tokenizer.save_pretrained("./pre_trained/fine_tune_tok")
         else:
             for line in tqdm(lines):
                 raw_data = json.loads(line)
