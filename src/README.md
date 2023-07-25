@@ -20,6 +20,10 @@
   
    이 때 해당 경로에 이미 저장된 토크나이저가 있다면, 불러온 뒤 학습에 활용합니다.
 
+- CodeSearchNet의 6개 언어에 대해 Treesitter에서 제공하는 라이브러리를 빌드 후 사용하였습니다.
+
+  Build 폴더에 Treesitter에서 제공하는 라이브러리를 clone하고 build 후 사용하시면 됩니다. 
+
 ## 1. Data Structure
 - 학습을 위해서는 CodeSearchNet 디렉토리 내의 데이터(*.jsonl)은 준비가 필요합니다.
 - data/cached 디렉토리 내 파일은 학습 과정에서 자동으로 생성되며, 해당 데이터는 입력으로 들어온 코드가 AST로 변환된 것입니다.
