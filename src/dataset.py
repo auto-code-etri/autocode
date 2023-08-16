@@ -123,7 +123,7 @@ def prepare_new_tokens():
     ast_tokens = []
 
     for l in lang:
-        file_path = './build/tree-sitter-{}/src/node-types.json'.format(l)
+        file_path = './build/node_types/{}/node-types.json'.format(l)
         with open(file_path,encoding='UTF-8') as json_file:
             data = json.load(json_file)
         for line in data:
