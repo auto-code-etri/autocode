@@ -43,7 +43,9 @@ def load_config():
     parser.add_argument("--warmup-ratio", type=float, default=0.1)
     parser.add_argument("--max-grad-norm", type=float, default=1.0)
     parser.add_argument("--gradient-accumulation-step", type=int, default=1)
-    parser.add_argument("--do_ast", type=bool, default=True)
+    parser.add_argument(
+        "--do_ast", action="store_true", default=False, help="Whether to use AST training"
+    )
 
     # model hparams
     parser.add_argument("--n-enc-block", type=int, default=12)
@@ -55,5 +57,5 @@ def load_config():
     )
     parser.add_argument("--max-len", type=int, default=512)
 
-    args = parser.parse_args([])
+    args = parser.parse_args()
     return args

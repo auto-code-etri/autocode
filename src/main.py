@@ -45,11 +45,12 @@ def main(rank, hparams, ngpus_per_node: int):
 
     # get shared tokenizer and vocab
     if hparams.distributed:
-        if rank != 0:
-            dist.barrier()
-        tok = get_tokenizer(hparams)
         if rank == 0:
+            tok = get_tokenizer(hparams)
             dist.barrier()
+        else:
+            dist.barrier()
+            tok = get_tokenizer(hparams)
     else:
         tok = get_tokenizer(hparams)
 

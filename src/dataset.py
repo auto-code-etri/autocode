@@ -254,7 +254,7 @@ def cache_processed_data(tokenizer, root_pth, cached_pth, mode, do_ast):
                 lang = raw_data["language"]
 
                 if cur_lang == None or cur_lang != lang:
-                        LANGUAGE = Language('build/my-languages.so', lang)
+                        LANGUAGE = Language('./build/my-languages.so', lang)
                         parser.set_language(LANGUAGE)
                         cur_lang = lang
 
