@@ -20,10 +20,6 @@
 
   - 빌드 결과는 src/build 폴더에 저장되어 있습니다.
 
-- CodeSearchNet의 6개 언어에 대해 Treesitter에서 제공하는 라이브러리를 빌드 후 사용하였습니다.
-
-  Build 폴더에 Treesitter에서 제공하는 라이브러리를 clone하고 build 후 사용하시면 됩니다. 
-
 ## 1. Data Structure
 
 - 학습을 위해서는 CodeSearchNet 디렉토리 내의 데이터(*.jsonl)은 사전에 준비가 필요합니다.
