@@ -9,7 +9,7 @@ import torch.multiprocessing as mp
 from transformers import AutoTokenizer
 
 from config import load_config
-from dataset import Prepare_loaders, get_loader
+from dataset import get_loader, prepare_new_tokens
 from model.net import Transformer
 from trainer import Trainer
 from utils import ResultWriter, fix_seed
@@ -19,13 +19,15 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 def get_tokenizer(hparams):
     if not os.path.exists("./pre_trained"):
         os.makedirs("./pre_trained")
+        new_tokens = prepare_new_tokens()
     
-    if os.path.exists("./pre_trained/fine_tune_tok") and hparams.do_ast:
-        print("pretrained tokenizer.")
+    if os.path.exists("./pre_trained/fine_tune_tok"):
         tok = AutoTokenizer.from_pretrained("./pre_trained/fine_tune_tok")
     else:
         tok = AutoTokenizer.from_pretrained("microsoft/codebert-base")
-        
+        if hparams.do_ast:
+            tok.add_tokens(new_tokens)
+            tok.save_pretrained("./pre_trained/fine_tune_tok")
     return tok
 
 def main(rank, hparams, ngpus_per_node: int):
@@ -52,7 +54,20 @@ def main(rank, hparams, ngpus_per_node: int):
         tok = get_tokenizer(hparams)
 
     # get dataloaders
-    loaders, tok = Prepare_loaders(tok, hparams)
+    loaders = [
+        get_loader(
+            tok=tok,
+            batch_size=hparams.batch_size,
+            root_path=hparams.root_path,
+            workers=hparams.workers,
+            max_len=hparams.max_len,
+            mode=mode,
+	        rank=hparams.rank,
+            do_ast=hparams.do_ast,
+            distributed=hparams.distributed,
+        )
+        for mode in ["train", "valid"]
+    ]
 
     # get model and initialize
     model = Transformer(
