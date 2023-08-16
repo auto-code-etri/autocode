@@ -20,6 +20,10 @@
 
   - 빌드 결과는 src/build 폴더에 저장되어 있습니다.
 
+- CodeSearchNet의 6개 언어에 대해 Treesitter에서 제공하는 라이브러리를 빌드 후 사용하였습니다.
+
+  Build 폴더에 Treesitter에서 제공하는 라이브러리를 clone하고 build 후 사용하시면 됩니다. 
+
 ## 1. Data Structure
 
 - 학습을 위해서는 CodeSearchNet 디렉토리 내의 데이터(*.jsonl)은 사전에 준비가 필요합니다.
@@ -63,6 +67,20 @@ src/
 
   - pip install packaging==21.3 (downgrading the packaging)
 
+
+## 2.1 Setup
+
+- conda create -n autocode python=3.8.10
+- conda activate autocode
+- conda install numpy==1.19.2 pandas==1.1.5
+- conda install openpyxl==3.0.7 xlrd==2.0.1 ipywidgets==7.6.3 jsonlines==2.0.0
+- conda install pyyaml==5.4.1
+- pip install transformers==4.5.1 torch==1.7.1 scikit-learn==0.23.2 tree_sitter==0.20.1
+- pip install tensorboardX
+
+- [에러] packaging.version.InvalidVersion: Invalid version: '0.10.1,<0.11' 
+  To solve this problem,  please do the following
+    pip install packaging==21.3 (downgrading the packaging)
 
 ## 3. How to Run
 
