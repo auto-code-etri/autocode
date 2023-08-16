@@ -67,21 +67,6 @@ src/
 
   - pip install packaging==21.3 (downgrading the packaging)
 
-
-## 2.1 Setup
-
-- conda create -n autocode python=3.8.10
-- conda activate autocode
-- conda install numpy==1.19.2 pandas==1.1.5
-- conda install openpyxl==3.0.7 xlrd==2.0.1 ipywidgets==7.6.3 jsonlines==2.0.0
-- conda install pyyaml==5.4.1
-- pip install transformers==4.5.1 torch==1.7.1 scikit-learn==0.23.2 tree_sitter==0.20.1
-- pip install tensorboardX
-
-- [에러] packaging.version.InvalidVersion: Invalid version: '0.10.1,<0.11' 
-  To solve this problem,  please do the following
-    pip install packaging==21.3 (downgrading the packaging)
-
 ## 3. How to Run
 
 **Note**: ```[CLS]```, ```[SEP]``` 은 각각 ```<s>```, ```</s>```을 의미합니다.
