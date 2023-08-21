@@ -65,7 +65,6 @@ src/
 
   - pip install packaging==21.3 (downgrading the packaging)
 
-
 ## 3. How to Run
 
 **Note**: ```[CLS]```, ```[SEP]``` 은 각각 ```<s>```, ```</s>```을 의미합니다.
