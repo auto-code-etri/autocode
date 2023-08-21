@@ -1,5 +1,7 @@
 ## 0. Overview
 
+- 학습을 위해서는 ```run.sh```의 ```--train_mode```를 활성화 시키면 됩니다.
+
 - Task: NL -> PL, NL -> AST
 
   - NL->AST 가 기본 옵션이며, NL->PL을 하기 위해서는, 실행시 ```run.sh```의 ```--do_ast``` 옵션을 제거한 뒤 실행하시면 됩니다.

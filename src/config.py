@@ -5,6 +5,9 @@ def load_config():
     parser = argparse.ArgumentParser()
 
     # default hparams
+    parser.add_argument(
+        "--train-mode", action="store_true", default=False, help="PyTorch(>=1.6.x) AMP"
+    )
     parser.add_argument("--root-path", type=str, default="./data/cached")
     parser.add_argument("--ckpt-path", type=str, default="./checkpoints/")
     parser.add_argument("--result-path", type=str, default="./results.csv")

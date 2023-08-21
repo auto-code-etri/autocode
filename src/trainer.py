@@ -319,10 +319,7 @@ class Trainer:
 
             # compute loss
             logit = self.model(src, tgt_input, src_mask, tgt_mask)
-            loss = self.criterion(
-                logit.contiguous().view(-1, logit.shape[-1]),
-                tgt_label.contiguous().view(-1),
-            )
+            loss = self.compute_loss(logit, tgt_label, torch.LongTensor([len(i) for i in tgt_label]))
             val_loss.update(loss.item())
 
         return val_loss.avg
@@ -342,11 +339,8 @@ class Trainer:
 
             # compute loss (should use '.module' here when using ddp)
             # https://discuss.pytorch.org/t/torch-distributed-barrier-hangs-in-ddp/114522/8
-            logit = self.model.module(src, tgt_input, src_mask, tgt_mask)
-            loss = self.criterion(
-                logit.contiguous().view(-1, logit.shape[-1]),
-                tgt_label.contiguous().view(-1),
-            )
+            logit = self.model(src, tgt_input, src_mask, tgt_mask)
+            loss = self.compute_loss(logit, tgt_label, torch.LongTensor([len(i) for i in tgt_label]))
             test_loss.update(loss.item())
 
         logging.info(f"[TST] Test Loss: {test_loss.avg:.4f}")
