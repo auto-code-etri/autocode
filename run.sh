@@ -25,5 +25,6 @@ python3 src/main.py\
     --fc-hidden=${FC_HIDDEN_DIM}\
     --num-head=${NUM_HEAD}\
     --do_ast\
+    --train_mode\
     --distributed\
     

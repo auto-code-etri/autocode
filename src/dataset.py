@@ -121,10 +121,11 @@ class TranslationDataset(Dataset):
 
 def prepare_new_tokens():
     lang = ["python", "java", "javascript", "go", "php", "ruby"]
+    lang_token = {"python":"<py>", "java":"<ja>", "javascript":"<js>", "go":"<go>", "php":"<php>", "ruby":"<ru>"}
     ast_tokens = []
 
     for l in lang:
-
+        ast_tokens.append(lang_token[l])
         file_path = './build/node_types/{}/node-types.json'.format(l)
         with open(file_path,encoding='UTF-8') as json_file:
             data = json.load(json_file)
