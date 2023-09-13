@@ -73,9 +73,10 @@ $ git clone https://github.com/openai/human-eval
 $ pip install -e human-eval
 ```
 
-## 2.4 CodeSearchNet Dataset 다운로드
- - CodeSearchNet 데이터셋은 huggingface 사이트에서 다운로드
- - 참고: https://huggingface.co/datasets/code_search_net
+## 2.4 평가 Dataset 다운로드
+ - 데이터셋은 huggingface 사이트에서 다운로드
+ - CodeSearchNet 데이터셋: https://huggingface.co/datasets/code_search_net
+ - CONCODE 데이터셋: https://huggingface.co/datasets/AhmedSSoliman/CodeXGLUE-CONCODE
 
    
 ## 3. How to Run
