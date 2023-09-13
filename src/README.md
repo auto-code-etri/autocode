@@ -74,8 +74,8 @@ $ pip install -e human-eval
 ```
 
 ## 2.4 CodeSearchNet Dataset 다운로드
- - CodeSearchNet 데이터셋은 공식 Github 홈페이지로부터 직접 다운로드
- - 참고: [https://github.com/openai/human-eval](https://github.com/github/CodeSearchNet)
+ - CodeSearchNet 데이터셋은 huggingface 사이트에서 다운로드
+ - 참고: https://huggingface.co/datasets/code_search_net
 
    
 ## 3. How to Run
