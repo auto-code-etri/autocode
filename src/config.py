@@ -6,7 +6,7 @@ def load_config():
 
     # default hparams
     parser.add_argument(
-        "--train-mode", action="store_true", default=False, help="PyTorch(>=1.6.x) AMP"
+        "--train-mode", action="store_true", default=False, help="Select (train, test) mode"
     )
     parser.add_argument("--root-path", type=str, default="./data/cached")
     parser.add_argument("--ckpt-path", type=str, default="./checkpoints/")

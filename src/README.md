@@ -1,6 +1,6 @@
 ## 0. Overview
 
-- 학습을 위해서는 ```run.sh```의 ```--train_mode```를 활성화 시키면 됩니다.
+- 학습을 위해서는 ```run.sh```의 ```--train_mode```를 활성화 시키면 됩니다. 활성화되지 않으면 학습이 완료된 모델을 기반으로 test가 이루어집니다.
 
 - Task: NL -> PL, NL -> AST
 
@@ -64,6 +64,7 @@ src/
 - [ERROR] packaging.version.InvalidVersion: Invalid version: '0.10.1,<0.11' 발생시 다음과 같이 해결
 
   - pip install packaging==21.3 (downgrading the packaging)
+
 
 ## 3. How to Run
 

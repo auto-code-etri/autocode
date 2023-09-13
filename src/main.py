@@ -17,17 +17,10 @@ from utils import ResultWriter, fix_seed
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 def get_tokenizer(hparams):
-    if not os.path.exists("./pre_trained"):
-        os.makedirs("./pre_trained")
+    tok = AutoTokenizer.from_pretrained("microsoft/codebert-base")
+    if hparams.do_ast:
         new_tokens = prepare_new_tokens()
-    
-    if os.path.exists("./pre_trained/fine_tune_tok"):
-        tok = AutoTokenizer.from_pretrained("./pre_trained/fine_tune_tok")
-    else:
-        tok = AutoTokenizer.from_pretrained("microsoft/codebert-base")
-        if hparams.do_ast:
-            tok.add_tokens(new_tokens)
-            tok.save_pretrained("./pre_trained/fine_tune_tok")
+        tok.add_tokens(new_tokens)
     return tok
 
 def main(rank, hparams, ngpus_per_node: int):
