@@ -7,6 +7,7 @@ import torch.nn as nn
 from collections import OrderedDict
 import numpy as np
 from tqdm import tqdm
+from dataset import prepare_new_tokens
 
 DEVICE = "cuda"
 
@@ -199,13 +200,18 @@ if __name__ == "__main__":
     parser.add_argument("--max-len", type=int, default=512)
     parser.add_argument("--dropout", type=float, default=0.1)
     parser.add_argument("--beam_size", type=float, default=8)
+    parser.add_argument("--do-ast", type=bool, default=True)
     args = parser.parse_args()
 
     assert args.source, "You should enter source text to translate."
     assert args.ckpt_path, "You should enter trained checkpoint path."
 
     # load checkpoint
-    tok = AutoTokenizer.from_pretrained("asdf/fine_tune_tok")
+    tok = AutoTokenizer.from_pretrained("microsoft/codebert-base")
+    
+    if args.do_ast:
+        new_tokens = prepare_new_tokens()
+        tok.add_tokens(new_tokens)
     
     model = Transformer(
         vocab_size=len(tok.vocab),
