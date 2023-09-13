@@ -72,6 +72,11 @@ src/
 $ git clone https://github.com/openai/human-eval
 $ pip install -e human-eval
 ```
+
+## 2.4 CodeSearchNet Dataset 다운로드Setting for BLEU
+ - CodeSearchNet 데이터셋은 공식 Github 홈페이지로부터 직접 다운로드
+ - 참고: [https://github.com/openai/human-eval](https://github.com/github/CodeSearchNet)
+
    
 ## 3. How to Run
 
