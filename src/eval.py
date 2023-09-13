@@ -252,16 +252,15 @@ if __name__ == "__main__":
     lines = []
 
     if not os.path.exists("./result.txt") and not os.path.exists("./answers.json"):
-        with open("./CodeSearchNet/python/test.jsonl", "r") as f:
+        with open("./eval_data/concode/dev.json", "r") as f:
             lines += f.readlines()
-        lines = lines[:1000]
         with open("result.txt", "w") as f, jsonlines.open("answers.json", "w", flush=True) as f1:
             for num, line in enumerate(tqdm(lines)):
-                raw_data = json.loads(line)
-                tmp = raw_data["code"][:raw_data["code"].find("\"\"\"", raw_data["code"].find("\"\"\"") + 3) + 4]
-                raw = {'code': ''.join(raw_data["code"]), 'nl': tmp,}
+                code = line[10:line.find("}\"")+1]
+                nl = line[line.find("nl\":")+6:line.find("}\n")-1]
+                raw = {'code': code, 'nl': nl,}
                 f1.write(raw)
-                inputs = tok(tmp, return_tensors="pt").input_ids.to(DEVICE)
+                inputs = tok(nl, return_tensors="pt").input_ids.to(DEVICE)
                 sample = model.generate(inputs, num_beams=12, max_length=256 + len(inputs))
                 result = tok.decode(sample[0], skip_special_tokens=True)
                 f.write(result.replace("\n", "\\n") + "\n")
