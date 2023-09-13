@@ -205,7 +205,11 @@ if __name__ == "__main__":
     assert args.ckpt_path, "You should enter trained checkpoint path."
 
     # load checkpoint
-    tok = AutoTokenizer.from_pretrained("asdf/fine_tune_tok")
+    tok = AutoTokenizer.from_pretrained("microsoft/codebert-base")
+    
+    if hparams.do_ast:
+        new_tokens = prepare_new_tokens()
+        tok.add_tokens(new_tokens)
     
     model = Transformer(
         vocab_size=len(tok.vocab),
