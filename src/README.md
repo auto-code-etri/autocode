@@ -65,7 +65,10 @@ src/
 
   - pip install packaging==21.3 (downgrading the packaging)
 
-
+## 2.3 Setting for BLEU
+ - human-eval이 서ㄹ치되있어야 함
+ - 참고: https://github.com/openai/human-eval
+   
 ## 3. How to Run
 
 **Note**: ```[CLS]```, ```[SEP]``` 은 각각 ```<s>```, ```</s>```을 의미합니다.
