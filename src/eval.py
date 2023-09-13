@@ -248,16 +248,12 @@ if __name__ == "__main__":
     #path = ""
     #model = torch.load(path)
 
-
-    lines = []
-
     if not os.path.exists("./result.txt") and not os.path.exists("./answers.json"):
-        with open("./eval_data/concode/dev.json", "r") as f:
-            lines += f.readlines()
+        test_data = load_dataset("AhmedSSoliman/CodeXGLUE-CONCODE")['test']
         with open("result.txt", "w") as f, jsonlines.open("answers.json", "w", flush=True) as f1:
-            for num, line in enumerate(tqdm(lines)):
-                code = line[10:line.find("}\"")+1]
-                nl = line[line.find("nl\":")+6:line.find("}\n")-1]
+            for num, data in enumerate(tqdm(test_data)):
+                code = data['code']
+                nl = data['nl']
                 raw = {'code': code, 'nl': nl,}
                 f1.write(raw)
                 inputs = tok(nl, return_tensors="pt").input_ids.to(DEVICE)
