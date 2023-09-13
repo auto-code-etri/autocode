@@ -1,13 +1,25 @@
 import torch
-from model.net import Transformer
-from transformers import AutoTokenizer
-import argparse
+from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig, T5ForConditionalGeneration
+from datasets import load_dataset
 from typing import List
 import torch.nn as nn
-from collections import OrderedDict
 import numpy as np
 from tqdm import tqdm
+import json
+import jsonlines
+from config import load_config
 from dataset import prepare_new_tokens
+from model.net import *
+
+import os
+import logging
+from bleu import _bleu
+
+from human_eval.data import write_jsonl, read_problems
+import subprocess
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 DEVICE = "cuda"
 
@@ -23,6 +35,7 @@ class Beam(object):
         self.nextYs = [self.tt.LongTensor(size)
                        .fill_(0)]
         self.nextYs[0][0] = sos
+
         # Has EOS topped the beam yet.
         self._eos = eos
         self.eosTop = False
@@ -143,9 +156,9 @@ def subsequent_mask(size: int) -> torch.Tensor:
     subsequent_mask = np.triu(np.ones(attn_shape), k=1).astype("uint8")
     return torch.from_numpy(subsequent_mask) == 0
 
-def beam_search(model, tok, args):
+def beam_search(model, tok, args, so):
     model.eval()
-    source = args.source
+    source = so
 
     source_ids = torch.tensor(
         add_pad(tok, args.max_len, tok.encode(source, add_special_tokens=False)),
@@ -159,13 +172,13 @@ def beam_search(model, tok, args):
 
     lsm = nn.LogSoftmax(dim=-1).to(DEVICE)
     preds=[]
-    sos_id = tok.vocab["<s>"]
-    eos_id = tok.vocab["</s>"]
+    sos_id = tok.bos_token
+    eos_id = tok.eos_token
 
     zero=torch.cuda.LongTensor(1).fill_(0)  
     beam = Beam(args.beam_size,sos_id,eos_id)
     input_ids=beam.getCurrentState()                                                                    # [args.beam_size, generated_token_size]
-    
+
     for _ in tqdm(range(args.max_len)):
         if beam.done():
             break
@@ -177,67 +190,98 @@ def beam_search(model, tok, args):
         input_ids=torch.cat((input_ids,beam.getCurrentState()),-1)
         
     hyp= beam.getHyp(beam.getFinal())
-    pred=beam.buildTargetTokens(hyp)[:args.beam_size]                                                   # Best Prediction in Candidate list
+    pred=beam.buildTargetTokens(hyp)[:args.beam_size]
     pred=[torch.cat([x.view(-1) for x in p]+[zero]*(args.max_len-len(p))).view(1,-1) for p in pred]
     preds.append(torch.cat(pred,0).unsqueeze(0))
     
     preds=torch.cat(preds,0)                
     return preds   
-    
+
+def bleu(tok):
+    preds = open("result.txt", "r").readlines()
+    gts = open("answers.json", "r").readlines()
+
+    assert len(preds) == len(gts), f"Samples of predictions and answers are not equal, {len(preds)}: {len(gts)}"
+
+    total = len(gts)
+    EM = 0.0
+    with open("ground_truth.txt", "w") as wf:
+        for pred, gt in zip(preds, gts):
+            pred = pred.strip()
+            gt = json.loads(gt)["code"]
+            wf.write(gt+"\n")
+            if pred.split() == gt.split():
+                EM += 1
+
+    bleu_score = round(_bleu("ground_truth.txt", "result.txt", tok), 2)
+    logger.info(f"BLEU: {bleu_score}, EM: {round(EM/total*100, 2)}")
+    print(f"BLEU: {bleu_score}, EM: {round(EM/total*100, 2)}")
+
+    try:
+        os.remove("ground_truth.txt")
+    except Exception:
+        pass
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--source", type=str, help="Input sequence to translate")
-    parser.add_argument("--ckpt-path", type=str, default="checkpoints/version-2/best_model_step_56249_loss_1.2378.pt", help="Checkpoint path to decode")
-
-    parser.add_argument("--n-enc-block", type=int, default=12)
-    parser.add_argument("--n-dec-block", type=int, default=12)
-    parser.add_argument("--hidden", type=int, default=768)
-    parser.add_argument("--fc-hidden", type=int, default=2048)
-    parser.add_argument(
-        "--num-head", type=int, default=12, help="Number of self-attention head"
-    )
-    parser.add_argument("--max-len", type=int, default=512)
-    parser.add_argument("--dropout", type=float, default=0.1)
-    parser.add_argument("--beam_size", type=float, default=8)
-    parser.add_argument("--do-ast", type=bool, default=True)
-    args = parser.parse_args()
-
-    assert args.source, "You should enter source text to translate."
-    assert args.ckpt_path, "You should enter trained checkpoint path."
 
     # load checkpoint
-    tok = AutoTokenizer.from_pretrained("microsoft/codebert-base")
-    
-    if args.do_ast:
-        new_tokens = prepare_new_tokens()
-        tok.add_tokens(new_tokens)
-    
-    model = Transformer(
-        vocab_size=len(tok.vocab),
-        num_enc_block=args.n_enc_block,
-        num_dec_block=args.n_dec_block,
-        num_head=args.num_head,
-        hidden=args.hidden,
-        fc_hidden=args.fc_hidden,
-        dropout=args.dropout,
-    )
-    state_dict = torch.load(args.ckpt_path)
-    new_state_dict = OrderedDict()
-    
-    for k, v in state_dict.items():
-        name = k[7:]  # remove `module.`
-        new_state_dict[name] = v
-        
-    model.load_state_dict(new_state_dict)
+    config = AutoConfig.from_pretrained("Salesforce/codegen2-1B")
+    tok = AutoTokenizer.from_pretrained("Salesforce/codegen2-1B")
+    model = AutoModelForCausalLM.from_pretrained("Salesforce/codegen2-1B", trust_remote_code=True, revision="main")
     model.to(DEVICE)
-    
-    preds = beam_search(model, tok, args)
 
-    for pred in preds:
-        t=pred[0].cpu().numpy()
-        t=list(t)
-        if 0 in t:
-            t=t[:t.index(0)]
-        text = tok.decode(t,clean_up_tokenization_spaces=False)
-        print(text)
+    #args = load_config()
+    #tok = AutoTokenizer.from_pretrained("microsoft/codebert-base")
+    #if args.do_ast:
+    #    new_tokens = prepare_new_tokens()
+    #    tok.add_tokens(new_tokens)
+#
+    #model = Transformer(
+    #    vocab_size=len(tok.vocab),
+    #    num_enc_block=args.n_enc_block,
+    #    num_dec_block=args.n_dec_block,
+    #    num_head=args.num_head,
+    #    hidden=args.hidden,
+    #    fc_hidden=args.fc_hidden,
+    #    dropout=args.dropout,
+    #)
+    #path = ""
+    #model = torch.load(path)
+
+
+    lines = []
+
+    if not os.path.exists("./result.txt") and not os.path.exists("./answers.json"):
+        with open("./CodeSearchNet/python/test.jsonl", "r") as f:
+            lines += f.readlines()
+        lines = lines[:1000]
+        with open("result.txt", "w") as f, jsonlines.open("answers.json", "w", flush=True) as f1:
+            for num, line in enumerate(tqdm(lines)):
+                raw_data = json.loads(line)
+                tmp = raw_data["code"][:raw_data["code"].find("\"\"\"", raw_data["code"].find("\"\"\"") + 3) + 4]
+                raw = {'code': ''.join(raw_data["code"]), 'nl': tmp,}
+                f1.write(raw)
+                inputs = tok(tmp, return_tensors="pt").input_ids.to(DEVICE)
+                sample = model.generate(inputs, num_beams=12, max_length=256 + len(inputs))
+                result = tok.decode(sample[0], skip_special_tokens=True)
+                f.write(result.replace("\n", "\\n") + "\n")
+                f.flush()
+            bleu(tok)
+    else:
+        bleu(tok)
+
+    problems = read_problems()
+
+    num_samples_per_task = 100
+    with jsonlines.open("samples.jsonl", "w", flush=True) as f1:
+        for _ in tqdm(range(num_samples_per_task)):
+            for task_id in problems:
+                inputs = tok(problems[task_id]["prompt"], return_tensors="pt", max_length=127).to(DEVICE)
+                sample = model.generate(**inputs, num_beams=12, max_length=128, pad_token_id=tok.eos_token_id)
+                result = tok.decode(sample[0])
+                f1.write(dict(task_id=task_id, completion=result[len(problems[task_id]["prompt"]):]))
+    #write_jsonl("samples.jsonl", samples)
+
+    humaneval_result = subprocess.run("evaluate_functional_correctness samples.jsonl", shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+
+    print(humaneval_result.stdout.decode("utf-8"))
