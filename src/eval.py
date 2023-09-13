@@ -252,7 +252,7 @@ if __name__ == "__main__":
     lines = []
 
     if not os.path.exists("./result.txt") and not os.path.exists("./answers.json"):
-        with open("./eval_data/concode/test.json", "r") as f:
+        with open("./eval_data/concode/dev.json", "r") as f:
             lines += f.readlines()
         with open("result.txt", "w") as f, jsonlines.open("answers.json", "w", flush=True) as f1:
             for num, line in enumerate(tqdm(lines)):
