@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 # Note: not same as paper settings
 BATCH_SIZE=32
 LR=5e-5
