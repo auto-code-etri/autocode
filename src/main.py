@@ -27,6 +27,7 @@ def main(rank, hparams, ngpus_per_node: int):
     fix_seed(hparams.seed)
     resultwriter = ResultWriter(hparams.result_path)
     if hparams.train_mode:
+	# use DDP
         if hparams.distributed:
             hparams.rank = hparams.rank * ngpus_per_node + rank
             print(f"Use GPU {hparams.rank} for training")
