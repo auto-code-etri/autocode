@@ -48,7 +48,7 @@ def main(rank, hparams, ngpus_per_node: int):
         else:
             tok = get_tokenizer(hparams)
 
-        # get dataloaders
+        # get train validation dataloaders
         loaders = [
             get_loader(
                 tok=tok,
