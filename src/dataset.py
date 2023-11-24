@@ -203,7 +203,7 @@ def remove_docstring(text):
             i += 1
     return re.sub(r'#.*', '', ''.join(result))
 
-def parse_ast(node, value):
+def parse_ast(node, value):                                                                                                # Parse AST from source code
     ast_input = value
     ast_input.append("<" + node.type + ">")                        
     if node.child_count == 0 and ast_input[-1] != node.text.decode("utf-8"):
@@ -212,7 +212,7 @@ def parse_ast(node, value):
         ast_input = parse_ast(child, ast_input)                              
     return ast_input                                                  
 
-def process_line(raw_data, lang_token, parser):
+def process_line(raw_data, lang_token, parser):                                                                
     tree = parser.parse(bytes(remove_docstring(raw_data["code"]), "utf-8"))
     init = []
     init.append(lang_token)
@@ -224,7 +224,7 @@ def cache_processed_data(tokenizer, root_pth, cached_pth, mode, do_ast):
 
     lines = []
     lang = ["python", "java", "javascript", "go", "php", "ruby"]
-    lang_token = {"python":"<py>", "java":"<ja>", "javascript":"<js>", "go":"<go>", "php":"<php>", "ruby":"<ru>"}
+    lang_token = {"python":"<py>", "java":"<ja>", "javascript":"<js>", "go":"<go>", "php":"<php>", "ruby":"<ru>"}            # tokens to identify the language of the source code.
 
     # load raw data
     if mode == "train":
@@ -275,7 +275,7 @@ def cache_processed_data(tokenizer, root_pth, cached_pth, mode, do_ast):
                         f.write(result)
                     code = []
                     docs = []
-        else:
+        else:                                                                                                                       # PL parser
             for line in tqdm(lines):
                 raw_data = json.loads(line)
                 doc = tokenizer.tokenize(''.join(raw_data["docstring_tokens"]))
