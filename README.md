@@ -6,7 +6,7 @@ Research on technology that automatically generates high-quality source code fro
 
 ![image](./overview_autocode.png)
 
-# "src" Directory 
+# "src" directory 
 ## 0. Overview
 
 - 학습을 위해서는 ```run.sh```의 ```--train_mode```를 활성화 시키면 됩니다. 활성화되지 않으면 학습이 완료된 모델을 기반으로 test가 이루어집니다.
