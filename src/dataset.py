@@ -57,12 +57,6 @@ class TranslationDataset(Dataset):
         return torch.tensor(indice)
 
     def add_tgt_pad(self, indice: List[int]) -> Tuple[torch.Tensor]:
-        """
-        Example:
-            indice: <s> I am happy </s>
-            t_input: <s> I am happy
-            t_label: I am happy </s>
-        """
         t_input, t_label = indice[:-1], indice[1:]
 
         # pad for tgt input
@@ -286,7 +280,7 @@ def cache_processed_data(tokenizer, root_pth, cached_pth, mode, do_ast):
                         f.write(result)
                     code = []
                     docs = []
-        else:
+        else:                                                                                                                                       #PL parser
             for line in tqdm(lines):
                 raw_data = json.loads(line)
                 doc = tokenizer.tokenize(''.join(raw_data["docstring_tokens"]))
