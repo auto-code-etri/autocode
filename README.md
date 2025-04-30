@@ -6,10 +6,6 @@ Research on technology that automatically generates high-quality source code fro
 
 ![image](./overview_autocode.png)
 
-# ETRI LangGraph
-
-A language model-based code generation and evaluation framework developed by ETRI.
-
 ## Overview
 
 This repository contains tools and frameworks for code generation and evaluation using language models. The project leverages LangGraph and various language model APIs to provide a robust environment for code generation tasks.
