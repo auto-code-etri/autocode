@@ -85,8 +85,6 @@ autocode/
 ├── templates/       # Template files
 ├── third_party/     # Third-party dependencies
 ├── api_keys.json    # API key configuration
-├── codegen.sh       # Code generation script
-├── eval.sh          # Evaluation script
 ├── run.py           # Main entry point
 └── requirements.txt # Python dependencies
 ```
