@@ -83,7 +83,7 @@ python run.py evaluator \
 ## Project Structure
 
 ```
-etri_langgraph/
+autocode/
 ├── configs/          # Configuration files
 ├── src/             # Source code
 ├── templates/       # Template files
