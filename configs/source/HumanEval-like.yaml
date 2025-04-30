@@ -1,0 +1,5 @@
+name: HumanEval-like
+type: json
+kwargs:
+  path: data/humaneval_like.json
+  sort_key: id

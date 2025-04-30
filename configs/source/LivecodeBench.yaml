@@ -1,0 +1,6 @@
+name: LivecodeBench
+type: huggingface
+kwargs:
+  path: livecodebench/code_generation
+  sort_key: question_id
+  split: test

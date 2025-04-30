@@ -1,0 +1,5 @@
+name: LivecodeBench-like
+type: json
+kwargs:
+  path: data/livecodebench_like.json
+  sort_key: id

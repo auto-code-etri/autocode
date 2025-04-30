@@ -1,0 +1,5 @@
+{
+  "OPEN_WEBUI_BASE_URL": "http://localhost:8002/v1/",
+  "OPENAI_API_KEY": "sk-your-key",
+  "CODEEXEC_ENDPOINT": "http://localhost:5097/execute"
+}

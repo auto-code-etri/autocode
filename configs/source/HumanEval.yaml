@@ -1,0 +1,6 @@
+name: HumanEval
+type: huggingface
+kwargs:
+  path: openai/openai_humaneval
+  sort_key: task_id
+  split: test

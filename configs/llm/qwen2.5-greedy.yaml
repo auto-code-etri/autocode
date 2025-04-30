@@ -1,0 +1,5 @@
+max_tokens: 16384
+model: Qwen/Qwen2.5-Coder-32B-Instruct
+platform: vllm
+temperature: 0
+top_p: 1

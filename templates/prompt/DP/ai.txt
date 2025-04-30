@@ -1,0 +1,6 @@
+```python
+{% set lines = code.splitlines() -%}
+{% for line in lines %}
+    {{ line }}
+{%- endfor%}
+```

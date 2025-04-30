@@ -1,0 +1,5 @@
+max_tokens: 16384
+model: deepseek-ai/DeepSeek-R1-Distill-Llama-70B
+platform: vllm
+temperature: 0.6
+top_p: 0.95

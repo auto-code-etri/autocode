@@ -1,0 +1,5 @@
+max_tokens: 16000
+model: Qwen/QwQ-32B
+platform: vllm
+temperature: 0.6
+top_p: 0.95

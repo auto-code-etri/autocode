@@ -1,0 +1,5 @@
+max_tokens: 2048
+model: llama3.1:70b-instruct-fp16
+platform: ollama
+temperature: 0.8
+top_p: 0.95

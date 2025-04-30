@@ -1,0 +1,82 @@
+source:
+  - name: HumanEval
+    type: huggingface
+    kwargs:
+      path: openai/openai_humaneval
+      sort_key: task_id
+      split: test
+
+dataset:
+  - name: target
+    type: dict
+    kwargs:
+      primary_key: id
+      fields:
+        - name: id
+          source: HumanEval
+          key: task_id
+        - name: entry_point
+          source: HumanEval
+          key: entry_point
+        - name: prompt
+          source: HumanEval
+          key: prompt
+        - name: gold_tc
+          source: HumanEval
+          key: test
+
+graph:
+  entry_point: gen_code
+
+  edges:
+    - pair: [gen_code, parse_code]
+      type: always
+    - pair: [parse_code, gold_tc_exec_code]
+      type: always
+    - pair: [gold_tc_exec_code, gold_tc_exec_result]
+      type: always
+    - pair: [gold_tc_exec_result, passed]
+      type: always
+    - pair: [passed, __end__]
+      type: always
+
+
+  nodes:
+    - name: gen_code
+      type: llm
+      input_keys: [prompt]
+      kwargs:
+        n: 1
+        output_key: llm_jun_out
+        llm: !inc configs/llm/llama3_8b-greedy.yaml
+        prompt:
+          type: chat
+          kwargs:
+            body_template_paths: ["templates/prompt/DP"]
+    - name: parse_code
+      type: parser
+      input_keys: [llm_jun_out]
+      kwargs:
+        output_key: code
+        type: code_block
+    - name: gold_tc_exec_code
+      type: apply_template
+      input_keys: [code, gold_tc, entry_point]
+      key_map: { code: code, gold_tc: testcase, entry_point: entry_point }
+      kwargs:
+        output_key: gold_tc_exec_code
+        template_path: templates/eval/exec_code_he.txt
+    - name: gold_tc_exec_result
+      type: execute
+      input_keys: [gold_tc_exec_code]
+      kwargs:
+        output_key: gold_tc_exec_code
+        type: code_block
+    - name: passed
+      dependencies: [gold_tc_exec_result]
+      input_keys: [gold_tc_exec_result]
+      type: custom_lambda
+      kwargs:
+        src: [gold_tc_exec_result]
+        func: "lambda x: 'Exit Code: 0' in x"
+      

@@ -1,0 +1,5 @@
+{{ code }}
+
+{{ testcase }}
+
+check({{ entry_point }})
