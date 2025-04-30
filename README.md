@@ -69,8 +69,6 @@ python3 run.py generator \
 python run.py evaluator \
     --path=results/jun_test_2/results_merged_0.json \
     --gt_key=passed \
-    --filter_keys=[gen_tc_passed] \
-    --filter_weights=[1] \
     - run \
     --k=[1] \
     --n=10
