@@ -1,0 +1,5 @@
+```python
+{{ cot }}
+```
+
+Let's think step-by-step and write python code to solve the problem. Package your response in ```plaintext ... ```
