@@ -107,10 +107,11 @@ python run.py evaluator \
 
 ```
 autocode/
-├── configs/          # Configuration files
+├── configs/         # Configuration files
 ├── src/             # Source code
 ├── templates/       # Template files
 ├── third_party/     # Third-party dependencies
+├── .gitmodules      # Submodule information
 ├── api_keys.json    # API key configuration
 ├── run.py           # Main entry point
 └── requirements.txt # Python dependencies
