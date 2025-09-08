@@ -1,1 +1,0 @@
-gunicorn -w 36 --bind 0.0.0.0:5097 --timeout 6000 'app:app'
