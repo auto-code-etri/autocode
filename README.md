@@ -35,6 +35,7 @@ source venv/bin/activate
 2. Install dependencies:
 ```bash
 pip install -r requirements.txt
+git submodule update --init --recursive
 pip install -e third_party/etri_langgraph
 ```
 
