@@ -40,13 +40,6 @@ git submodule update --init --recursive
 pip install -e third_party/etri_langgraph
 ```
 
-3. Activate CodeExecContainer
-```bash
-tmux
-cd third_party/CodeExecContainer
-source run.sh
-```
-
 ## Configuration
 
 1. Create an `api_keys.json` file in the root directory with the following structure:
@@ -82,33 +75,11 @@ python3 run.py generator \
     - exit
 ```
 
-### Code Evaluation
-#### LLaMA-3
-```bash
-python run.py evaluator \
-    --path=results/llama3_test/results_merged_0.json \
-    --gt_key=passed \
-    - run \
-    --k=[1] \
-    --n=10
-```
-
-#### GPT-4
-```bash
-python run.py evaluator \
-    --path=results/gpt4_test/results_merged_0.json \
-    --gt_key=passed \
-    - run \
-    --k=[1] \
-    --n=10
-```
-
 ## Project Structure
 
 ```
 autocode/
 ├── configs/         # Configuration files
-├── src/             # Source code
 ├── templates/       # Template files
 ├── third_party/     # Third-party dependencies
 ├── .gitmodules      # Submodule information
