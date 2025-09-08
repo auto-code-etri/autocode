@@ -10,14 +10,6 @@ Research on technology that automatically generates high-quality source code fro
 
 This repository contains tools and frameworks for code generation and evaluation using language models. The project leverages LangGraph and various language model APIs to provide a robust environment for code generation tasks.
 
-## Features
-
-- Code generation capabilities using language models
-- Evaluation framework for generated code
-- Integration with multiple language model APIs
-- Configurable generation and evaluation pipelines
-- Support for various programming languages and frameworks
-
 ## Prerequisites
 
 - Python 3.10 or higher
