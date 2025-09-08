@@ -1,0 +1,3 @@
+[submodule "etri_langgraph"]
+	path = third_party/etri_langgraph
+	url = https://github.com/DDIDUs/etri_langgraph
