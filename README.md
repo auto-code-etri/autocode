@@ -64,7 +64,7 @@ The project provides two main functionalities:
 
 ### Code Generation
 
-## LLaMA-3
+#### LLaMA-3
 ```bash
 python3 run.py generator \
     --config_path=configs/llama3_test.yaml \
@@ -73,7 +73,7 @@ python3 run.py generator \
     - exit
 ```
 
-## GPT-4
+#### GPT-4
 ```bash
 python3 run.py generator \
     --config_path=configs/gpt4_test.yaml \
@@ -83,7 +83,7 @@ python3 run.py generator \
 ```
 
 ### Code Evaluation
-## LLaMA-3
+#### LLaMA-3
 ```bash
 python run.py evaluator \
     --path=results/llama3_test/results_merged_0.json \
@@ -93,7 +93,7 @@ python run.py evaluator \
     --n=10
 ```
 
-## GPT-4
+#### GPT-4
 ```bash
 python run.py evaluator \
     --path=results/gpt4_test/results_merged_0.json \
