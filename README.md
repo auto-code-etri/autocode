@@ -20,8 +20,8 @@ This repository contains tools and frameworks for code generation and evaluation
 
 1. Create and activate a virtual environment:
 ```bash
-virtualenv venv --python=3.10
-source venv/bin/activate 
+python -m venv test
+source test/bin/activate 
 ```
 
 2. Install dependencies:
