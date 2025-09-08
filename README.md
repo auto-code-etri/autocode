@@ -30,6 +30,7 @@ This repository contains tools and frameworks for code generation and evaluation
 ```bash
 virtualenv venv --python=3.10
 source venv/bin/activate  
+sudo apt-get install tmux
 ```
 
 2. Install dependencies:
@@ -37,6 +38,13 @@ source venv/bin/activate
 pip install -r requirements.txt
 git submodule update --init --recursive
 pip install -e third_party/etri_langgraph
+```
+
+3. Activate CodeExecContainer
+```bash
+tmux
+cd third_party/CodeExecContainer
+source run.sh
 ```
 
 ## Configuration
@@ -56,19 +64,39 @@ The project provides two main functionalities:
 
 ### Code Generation
 
+## LLaMA-3
 ```bash
 python3 run.py generator \
-    --config_path=configs/jun_test_2.yaml \
+    --config_path=configs/llama3_test.yaml \
+    - run \
+    - merge_json \
+    - exit
+```
+
+## GPT-4
+```bash
+python3 run.py generator \
+    --config_path=configs/gpt4_test.yaml \
     - run \
     - merge_json \
     - exit
 ```
 
 ### Code Evaluation
-
+## LLaMA-3
 ```bash
 python run.py evaluator \
-    --path=results/jun_test_2/results_merged_0.json \
+    --path=results/llama3_test/results_merged_0.json \
+    --gt_key=passed \
+    - run \
+    --k=[1] \
+    --n=10
+```
+
+## GPT-4
+```bash
+python run.py evaluator \
+    --path=results/gpt4_test/results_merged_0.json \
     --gt_key=passed \
     - run \
     --k=[1] \
