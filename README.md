@@ -45,8 +45,7 @@ pip install -e third_party/etri_langgraph
 ```json
 {
   "OPEN_WEBUI_BASE_URL": "your-model-url",
-  "OPENAI_API_KEY": "your-api-key",
-  "CODEEXEC_ENDPOINT": "http://localhost:5097/execute"
+  "OPENAI_API_KEY": "your-api-key"
 }
 ```
 
