@@ -145,4 +145,4 @@ python3 run.py
 [Langchain-url]: https://www.langchain.com/
 [Docker]: https://img.shields.io/badge/docker-257bd6?style=for-the-badge&logo=docker&logoColor=white
 [Docker-url]: https://www.docker.com/
-[Overview]: overview.autocode.png
+[Overview]: overview_autocode.png
