@@ -138,7 +138,7 @@ python3 run.py
 <!-- LICENSE -->
 ## License
 
-Distributed under the Unlicense License. See `LICENSE` for more information.
+Distributed under the ETRI License. See `LICENSE` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
