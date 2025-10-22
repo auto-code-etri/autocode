@@ -47,7 +47,11 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Project Overview][Overview]]
+<div align="center">
+  <a href="https://github.com/auto-code-etri/autocode">
+    <img src="overview_autocode.png" alt="Overview" width="80" height="80">
+  </a>
+</div>
 
 **PULSE** is a large language model–based framework that automatically generates **expert-level, high-quality source code** from natural language requirements.  
 
@@ -145,4 +149,3 @@ python3 run.py
 [Langchain-url]: https://www.langchain.com/
 [Docker]: https://img.shields.io/badge/docker-257bd6?style=for-the-badge&logo=docker&logoColor=white
 [Docker-url]: https://www.docker.com/
-[Overview]: overview_autocode.png
