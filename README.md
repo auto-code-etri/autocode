@@ -49,7 +49,7 @@
 
 <div align="center">
   <a href="https://github.com/auto-code-etri/autocode">
-    <img src="overview_autocode.png" alt="Overview" width="80" height="80">
+    <img src="overview_autocode.png" alt="Overview">
   </a>
 </div>
 
