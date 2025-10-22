@@ -1,0 +1,11 @@
+graph:
+  entry_point: CodeGenerator
+  nodes:
+  - name: CodeGenerator # Class Name
+  - name: JsonParser
+  edges:
+    - pair: [CodeGenerator, JsonParser]
+      type: always
+    - pair: [JsonParser, __end__]
+      type: always
+
