@@ -48,17 +48,17 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
+**PULSE** is a large language model–based framework that automatically generates **expert-level, high-quality source code** from natural language requirements.  
+
+This project provides the following key features:  
+- Analyzes user requirements to generate **structured, testable, and maintainable code**, producing results that go beyond simple code snippets to practical, production-ready outputs.  
+- Supports a **structured pipeline and multiple language model environments**, making it suitable for both research and real-world development.
+
 <div align="center">
   <a href="https://github.com/auto-code-etri/autocode">
     <img src="overview_autocode.png" alt="Overview">
   </a>
 </div>
-
-**PULSE** is a large language model–based framework that automatically generates **expert-level, high-quality source code** from natural language requirements.  
-
-This project provides the following key features:  
-- Analyzes user requirements to generate **structured, testable, and maintainable code**, producing results that go beyond simple code snippets to practical, production-ready outputs.  
-- Supports a **structured pipeline and multiple language model environments**, making it suitable for both research and real-world development.  
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
