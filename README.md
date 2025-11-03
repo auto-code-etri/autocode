@@ -118,12 +118,10 @@ export OPENAI_API_KEY='sk-(your key)'
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-The project provides two main functionalities:
+This project provides a code generation environment.
 
 ### Code Generation
 
