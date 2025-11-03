@@ -140,7 +140,7 @@ python3 run.py
 
 Copyright *On-Device AI Model Research Laboratory, ETRI*.
 
-All rights reserved. For more details, see `LICENSE.txt`.
+All rights reserved. For more details, see `LICENSE`.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
