@@ -86,17 +86,25 @@ To get a local copy up and running follow these simple example steps.
 - CUDA-compatible GPU (recommended for optimal performance)
 - Virtual environment (recommended)
 
-### Installation
+## Installation
 
-1. Create and activate a virtual environment:
+1. Install uv (A fast Python package installer and resolver):
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+2. Create and activate a virtual environment:
 ```bash
 python -m venv test
 source test/bin/activate 
 ```
 
-2. Install dependencies:
+3. Install dependencies:
 ```bash
-pip install -r requirements.txt
+uv pip install -r requirements.txt
+git submodule update --init --recursive
+uv pip install -e third_party/etri_langgraph
 ```
 
 ## Configuration
