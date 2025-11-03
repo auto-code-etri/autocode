@@ -9,7 +9,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/auto-code-etri/autocode">
-    <img src="logo.png" alt="Logo" width="80" height="80">
+    <img src="image/logo.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">PULSE</h3>
@@ -56,7 +56,7 @@ This project provides the following key features:
 
 <div align="center">
   <a href="https://github.com/auto-code-etri/autocode">
-    <img src="overview_autocode.png" alt="Overview">
+    <img src="image/overview_autocode.png" alt="Overview">
   </a>
 </div>
 
