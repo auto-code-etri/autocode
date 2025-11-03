@@ -138,7 +138,17 @@ python3 run.py
 <!-- LICENSE -->
 ## License
 
-Distributed under the ETRI License. See `LICENSE` for more information.
+Copyright *On-Device AI Model Research Laboratory, ETRI*.
+
+All rights reserved. For more details, see `LICENSE.txt`.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- ACKNOWLEDGMENTS -->
+## Acknowledgment
+> This work was supported by Institute of Information & communications Technology Planning & Evaluation (IITP) grant funded by the Korea government(MSIT) (No.2022-0-00995, Automated reliable source code generation from natural language descriptions)
+
+> 이 논문은 2025년도 정부(과학기술정보통신부)의 재원으로 정보통신기획평가원의 지원을 받아 수행된 연구임 (No.2022-0-00995, 자연어로 기술된 요구사항에서 전문 개발자 수준의 고품질 코드를 자동 생성하는 기술 개발)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
