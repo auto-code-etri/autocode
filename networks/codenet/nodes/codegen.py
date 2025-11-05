@@ -12,11 +12,9 @@ class CodeGenerator(BaseNode):
     def __call__(self, state: dict) -> dict:
         print(self.get_name())
         
-        # 체인 구성을 위한 프롬프트 준비
         prompt_kwargs = {'body_template_paths': ['templates/prompt/DP']}
         input_prompt = chat_prompt(examples=None, **prompt_kwargs)
         
-        # LLM 파라미터 설정 및 LLM 체인 구성
         llm_params = {'max_tokens': 4096, 'model': 'gpt-4o-2024-11-20', 'platform': 'openai', 'temperature': 0, 'top_p': 1}
         chain = (
             input_prompt
@@ -24,11 +22,10 @@ class CodeGenerator(BaseNode):
             | StrOutputParser()
         )
 
-        data = state['input_data']  # input_data 가져오기
+        data = state['input_data']  
         
-        result = chain.invoke(data) # 체인 실행
-        
-        # 결과를 state에 추가        
+        result = chain.invoke(data)
+               
         state['llm_jun_out'] = result
         state['input_prompt'] = input_prompt.format_messages(**data)[-1].content
 
