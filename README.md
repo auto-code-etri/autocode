@@ -170,7 +170,7 @@ All rights reserved. For more details, see `LICENSE`.
 [stars-url]: https://github.com/auto-code-etri/autocode/stargazers
 [issues-shield]: https://img.shields.io/github/issues/auto-code-etri/autocode.svg?style=for-the-badge
 [issues-url]: https://github.com/auto-code-etri/autocode/issues
-[license-shield]: https://img.shields.io/github/license/auto-code-etri/autocode.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/badge/LICENSE-ETRI_copyright-blue?style=for-the-badge
 [license-url]: https://github.com/auto-code-etri/autocode/blob/master/LICENSE
 [Langchain]: https://img.shields.io/badge/LangChain-ffffff?logo=langchain&logoColor=green
 [Langchain-url]: https://www.langchain.com/
