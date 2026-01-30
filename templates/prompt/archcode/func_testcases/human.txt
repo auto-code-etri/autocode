@@ -1,0 +1,14 @@
+```python
+{{ prompt }}
+```
+
+Write functional testcases for the problem.
+You must categorize the test cases into the following categories and sub-categories, described below.
+All the categories must be covered.
+* "# Test Cases Regarding Functional Requirements"
+* "## General Cases"
+* "## Edge Cases"
+
+Don't use unittest or any other testing library.
+Package your response in ```python ... ```.
+You must start each test case with "### Testcase <number>:"
