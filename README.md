@@ -96,8 +96,8 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 
 2. Create and activate a virtual environment:
 ```bash
-python -m venv test
-source test/bin/activate 
+uv venv autocode --python 3.11.10
+source autocode/bin/activate
 ```
 
 3. Install dependencies:
