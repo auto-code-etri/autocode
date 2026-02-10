@@ -1,1 +1,6 @@
+.env
+.DS_Store
+venv
+__pycache__
 /test/
+third_party/ArchCode

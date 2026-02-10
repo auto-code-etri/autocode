@@ -1,0 +1,5 @@
+```python
+{{ prompt }}
+```
+
+Write requirements for the problem. Package your response in ```plaintext ... ```.

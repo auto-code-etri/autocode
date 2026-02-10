@@ -1,0 +1,31 @@
+graph:
+  entry_point: RequirementGenerator
+  
+  nodes:
+    - name: RequirementGenerator
+    - name: PlanGenerator
+    - name: CodeGenerator
+    - name: FuncTestCaseGenerator
+    - name: NonFuncTestCaseGenerator
+    - name: PythonCodeExecutor
+    - name: ExecutionResultFormatter
+    
+  edges:
+    - pair: [RequirementGenerator, PlanGenerator]
+      type: always
+    - pair: [PlanGenerator, CodeGenerator]
+      type: always
+    - pair: [PlanGenerator, FuncTestCaseGenerator]
+      type: always
+    - pair: [PlanGenerator, NonFuncTestCaseGenerator]
+      type: always
+    - pair: [CodeGenerator, PythonCodeExecutor]
+      type: always
+    - pair: [FuncTestCaseGenerator, PythonCodeExecutor]
+      type: always
+    - pair: [NonFuncTestCaseGenerator, PythonCodeExecutor]
+      type: always
+    - pair: [PythonCodeExecutor, ExecutionResultFormatter]
+      type: always
+    - pair: [ExecutionResultFormatter, __end__]
+      type: always
