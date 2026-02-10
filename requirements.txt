@@ -146,11 +146,11 @@ opentelemetry-util-http==0.46b0
 orjson==3.10.3
 overrides==7.7.0
 packaging==23.2
-pandas==1.4.4
+pandas==1.5.0
 parso 
 pexpect 
 pickleshare 
-Pillow==9.1.1
+Pillow==10.0.0
 platformdirs==4.2.2
 pluggy==1.5.0
 posthog==3.5.0
