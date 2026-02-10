@@ -24,7 +24,7 @@ net = ArchCodeNet()
 net.compile()
 result = net.run(state={'input_data': "implement sorting algorithm", "code_n": 10})
 ```
-This issue adapts the official implementation of ArchCode: `networks/archcode`
+This adapts the official implementation of ArchCode: `networks/archcode`
 Following the example langgraph network, `ArchCodeNet` is added on `networks/archcode/archcode.py`.
 The detailed configuration of the graph is described at `networks/archcode/ArchCode_etri.yaml`.
 The prompt templates for the executions are added at:
